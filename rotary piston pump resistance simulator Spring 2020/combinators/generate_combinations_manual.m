@@ -1,12 +1,5 @@
 %generate all additive combinations of individual piston torques
-function combinations = generate_combinations_manual(individual)
-    
-    on_off_matrix = [1 1 1 1 1 1 1 1;...
-                     1 0 1 0 1 0 1 0;...
-                     0 1 0 1 0 1 0 1;...
-                     1 0 0 1 1 0 0 1;...
-                     ];
-    
+function combinations = generate_combinations_manual(individual, on_off_matrix)
     combinations = on_off_matrix*individual;
 end
 
