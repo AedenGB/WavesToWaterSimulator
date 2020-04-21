@@ -30,3 +30,10 @@ pistons =  [
             ];
 
 plot_combinations(C,pistons);
+%% 2 double acting with all possible levels of power
+pistons =  [
+            [false;0;m] [true;0;1]...
+            [false;90;m] [true;90;1]...
+            ];
+
+plot_combinations(C,pistons);

@@ -7,8 +7,10 @@ function fig_polar = plot_combinations(C,pistons,on_off_matrix)
     end
     combinations = generate_combinations(piston_vectors,on_off_matrix);
     
+    [on_off_matrix, combinations] = remove_duplicates(on_off_matrix, combinations);
+    
     fig_polar = figure;
-    set(gcf,'color','w');
+    %set(gcf,'color','w');
     %plot all combinations and their means on a polar graph
     num_combinations = size(combinations,1);
     colors = hsv(num_combinations);
