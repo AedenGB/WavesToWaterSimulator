@@ -1,28 +1,43 @@
-function fig_polar = plot_combinations(C,pistons,on_off_matrix)
+%% plot all or selected combinations, given a certain set of pistons
+function [on_off_matrix, scaling_factor] = plot_combinations(C,pistons,on_off_matrix,targets)
     %with that combination of pistons, generate torque as a function of time
     %with selected combinations of cylinders on and off
     piston_vectors = simulate_config(pistons, C);
-    if nargin == 2
+    if sum(size(on_off_matrix)) ~= 0
         on_off_matrix = generate_combination_matrix(size(piston_vectors,1));
     end
-    combinations = generate_combinations(piston_vectors,on_off_matrix);
     
-    [on_off_matrix, combinations] = remove_duplicates(on_off_matrix, combinations);
+    % generate matrix of combinations
+    combinations = on_off_matrix*piston_vectors;
+    
+    if sum(size(targets)) == 0
+        [on_off_matrix, combinations] = remove_duplicates(on_off_matrix, combinations, 0.0001);
+        scaling_factor = 0;
+    else
+        [on_off_matrix, combinations,scaling_factor] = fit_target_resistances_by_fitness(on_off_matrix, combinations, targets, 0.0001);
+    end
     
     fig_polar = figure;
-    %set(gcf,'color','w');
+    set(gcf,'color','w');
     %plot all combinations and their means on a polar graph
     num_combinations = size(combinations,1);
     colors = hsv(num_combinations);
+    radian_range = 0:(2*pi)/360:2*pi;
+    legend_subset = zeros(1,num_combinations);
     for i = 1:num_combinations
-        radian_range = 0:(2*pi)/360:2*pi;
         combination_number = char(on_off_matrix(i,:)+48);
         %repeat first element to compensate for 0 vs 2pi position
-        polarplot(radian_range, [combinations(i,:) combinations(i,1)],...
-            'DisplayName',combination_number,'color',colors(i,:));
+        polarplot(radian_range, [combinations(i,:) combinations(i,1)],'color',colors(i,:));
         hold on;
-        polarplot(radian_range, mean(combinations(i,:))*ones(1,361),'LineWidth',1.5,...
-            'DisplayName',[combination_number ' avg'],'color',colors(i,:));
+        mean(combinations(i,:))
+        legend_subset(i) = polarplot(radian_range, mean(combinations(i,:))*ones(1,361),'LineWidth',1.5,...
+            'DisplayName',[combination_number ' mean = ' char(string(mean(combinations(i,:))))],'color',colors(i,:));
     end
-    legend;
+    if sum(size(targets)) ~= 0
+        for target = targets
+            polarplot(radian_range, mean(target)*ones(1,361),'LineWidth',2,...
+            'DisplayName','Target','color','black');
+        end
+    end
+    legend(legend_subset);
 end
