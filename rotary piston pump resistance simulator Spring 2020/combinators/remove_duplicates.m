@@ -2,7 +2,7 @@
 % when possible, keep combination with lowest standard deviation
 function [on_off_matrix_new, combinations_new] = remove_duplicates(on_off_matrix, combinations, tol)
     combinations_new = zeros(0,size(combinations,2));
-    on_off_matrix_new = zeros(0,size(combinations,2));
+    on_off_matrix_new = zeros(0,size(on_off_matrix,2));
     %find parameters fo each combination
     avg_vector = transpose(mean(transpose(combinations)));
     std_vector = transpose(std(transpose(combinations)));
